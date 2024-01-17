@@ -10,12 +10,32 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD,
 );
 
-mongoose
-  .connect(DB)
-  .then(() => console.log("[INFO] MongoDB Server Connected"))
-  .catch((err) => {
-    console.log(err);
-  });
+// Mongo Connection handlers
+
+mongoose.connect(DB);
+
+mongoose.connection.on("connected", () => {
+  console.log("[INFO] Mongo Connection ESTABLISHED");
+});
+
+mongoose.connection.on("reconnected", () => {
+  console.log("[INFO] Mongo Connection Re-ESTABLISHED");
+});
+
+mongoose.connection.on("disconnected", () => {
+  console.log("[INFO] Mongo is DISCONNECTED");
+});
+
+mongoose.connection.on("close", () => {
+  console.log("[INFO] Mongo Connection CLOSED");
+});
+
+mongoose.connection.on("error", (error) => {
+  console.log("[ERROR] Mongo Connection Error: ", error);
+  throw error;
+});
+
+//
 
 // const testTour = new Tour({
 //   name: "The Park Camper",
