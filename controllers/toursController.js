@@ -1,8 +1,9 @@
-const fs = require("fs");
+const Tour = require("../models/tourModel");
+// const fs = require("fs");
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
-);
+// const tours = JSON.parse(
+//   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
+// );
 
 exports.checkId = (req, res, next, val) => {
   console.log(`The requested id is: ${val}`);
