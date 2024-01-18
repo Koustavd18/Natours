@@ -46,6 +46,6 @@ app.use("/api/v1/users", userRouter);
 
 // app.delete("/api/v1/tours/:id", );
 
-console.log(app.get("env"));
+console.log(`[INFO] Current Environment is [${app.get("env")}]`);
 
 module.exports = app;
