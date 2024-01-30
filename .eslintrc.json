@@ -6,6 +6,7 @@
     "spaced-comment": "off",
     "no-console": "off",
     "consistent-return": "off",
+    "prefer-arrow-callback": "off",
     "func-names": "off",
     "object-shorthand": "off",
     "no-process-exit": "off",
