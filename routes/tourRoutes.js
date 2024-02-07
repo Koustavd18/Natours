@@ -23,4 +23,6 @@ router
   .patch(tourController.updateTour)
   .delete(tourController.deleteTour);
 
+router.route("/tour-name/:id").get(tourController.getTourName);
+
 module.exports = router;

@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
+process.on("uncaughtException", (err) => {
+  console.log("UNCAUGHT EXCEPTION.💥 Shutting Down Server.... ");
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
 dotenv.config({ path: "./config.env" });
 
 const app = require("./app");
@@ -35,24 +41,16 @@ mongoose.connection.on("error", (error) => {
   throw error;
 });
 
-//
-
-// const testTour = new Tour({
-//   name: "The Park Camper",
-//   price: 400,
-// });
-
-// testTour
-//   .save()
-//   .then((doc) => {
-//     console.log(doc);
-//   })
-//   .catch((err) => {
-//     console.log("Error :", err);
-//   });
-
 const port = process.env.PORT || 6969;
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`[INFO] Server is running at localhost:${port}....`);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.log(err.name, err.message);
+  console.log("[ERROR] UNHANDLER REJECTION. 💥Shutting Down");
+  server.close(() => {
+    process.exit(1);
+  });
 });
