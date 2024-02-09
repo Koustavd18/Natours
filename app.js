@@ -2,6 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
+const AppError = require("./utils/appError");
+const globalErrorHandler = require("./controllers/errorController");
 
 const app = express();
 
@@ -57,28 +59,10 @@ app.use("/api/v1/users", userRouter);
 */
 
 app.all("*", (req, res, next) => {
-  // res.status(404).json({
-  //   status: "failed",
-  //   message: `Can'to findo thiso ${req.originalUrl}`,
-  // });
-
-  const err = new Error("Canto findo thiso");
-  err.status = "failed";
-  err.statusCode = 409;
-
-  next(err);
+  next(new AppError(`Can't find this ${req.originalUrl}`, 404));
 });
 
-app.use((err, req, res, next) => {
-  err.status = err.status || "Error";
-  err.statusCode = err.statusCode || 505;
-
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-  });
-  next();
-});
+app.use(globalErrorHandler);
 
 console.log(`[INFO] Current Environment is [${app.get("env")}]`);
 
