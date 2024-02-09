@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
-  console.log("Hello from the Custom Middleware 🤟🏻");
+  console.log("Welcome to Natours 🤟🏻");
   next();
 });
 
@@ -50,9 +50,6 @@ app.route("/").get(home);
 app.use("/api/v1/tours", tourRouter);
 
 app.use("/api/v1/users", userRouter);
-
-// app.patch("/api/v1/tours/:id", );
-// app.delete("/api/v1/tours/:id", );
 
 /*
     Error Handling

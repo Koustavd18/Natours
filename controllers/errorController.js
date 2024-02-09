@@ -26,6 +26,12 @@ const handlevalidationDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleJWTError = (err) =>
+  new AppError("You are Not logged In. Log in again", 401);
+
+const handleJWTExpired = (err) =>
+  new AppError("Session Expired, Please Log In again", 401);
+
 const sendErrProd = (err, res) => {
   if (err.isOperational) {
     res.status(err.statusCode).json({
@@ -61,6 +67,8 @@ module.exports = (err, req, res, next) => {
     if (err.name === "CastError") error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateDB(error);
     if (err.name === "ValidationError") error = handlevalidationDB(error);
+    if (err.name === "JsonWebTokenError") error = handleJWTError(error);
+    if (err.name === "TokenExpiredError") error = handleJWTExpired(error);
     sendErrProd(error, res);
   } else if (process.env.NODE_ENV === "development") {
     sendErrDev(err, res);
