@@ -39,6 +39,11 @@ const userSchema = new mongoose.Schema({
   passwordChanged: {
     type: Date,
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
   passwordResetToken: String,
   passwordResetExpire: Date,
   photo: {
@@ -46,7 +51,16 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// Password Hashing
+/// MIDDLEWIRES ///
+
+//not showing deactivated users
+
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
+
+// Password Hashing //
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
@@ -56,7 +70,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-//Password Compare
+// Password Compare //
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,
@@ -74,6 +88,14 @@ userSchema.methods.changedPassword = function (JWTTimeStamp) {
 
   return false;
 };
+
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) {
+    return next();
+  }
+
+  this.passwordChanged = Date.now() - 1000;
+});
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");

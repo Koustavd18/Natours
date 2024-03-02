@@ -1,7 +1,16 @@
 const express = require("express");
+const cors = require("cors");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const hpp = require("hpp");
+
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
+const reviewRouter = require("./routes/reviewRoutes");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
@@ -9,21 +18,47 @@ const app = express();
 
 //Middlewares
 
-app.use(express.json());
+// Set Security HTTP headers
+app.use(helmet());
+
+//Cross Origin Resource Sharing
+app.use(cors());
+
+//Body parser
+app.use(express.json({ limit: "500kb" }));
+
+//Cookie Parser
+app.use(cookieParser());
+
+//parameter pollution
+app.use(
+  hpp({
+    whitelist: ["duartion", "sort"],
+  }),
+);
+
+//Data Sanitazation (NoSQL Query Injection and XSS)
+app.use(mongoSanitize());
+app.use(xss());
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
+// Rate Limiter
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too Many Requests, Try again in an hour",
+});
+
+app.use("/api", limiter);
+
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
-  console.log("Welcome to Natours 🤟🏻");
-  next();
-});
-
-app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+
   next();
 });
 
@@ -51,6 +86,8 @@ app.use("/api/v1/tours", tourRouter);
 
 app.use("/api/v1/users", userRouter);
 
+app.use("/api/v1/reviews", reviewRouter);
+
 /*
     Error Handling
 */
@@ -61,6 +98,6 @@ app.all("*", (req, res, next) => {
 
 app.use(globalErrorHandler);
 
-console.log(`[INFO] Current Environment is [${app.get("env")}]`);
+console.warn(`[INFO] Current Environment is [${app.get("env")}]`);
 
 module.exports = app;

@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 process.on("uncaughtException", (err) => {
-  console.log("UNCAUGHT EXCEPTION.💥 Shutting Down Server.... ");
-  console.log(err.name, err.message);
+  console.error("UNCAUGHT EXCEPTION.💥 Shutting Down Server.... ");
+  console.error(err.name, err.message);
   process.exit(1);
 });
 
@@ -44,12 +44,12 @@ mongoose.connection.on("error", (error) => {
 const port = process.env.PORT || 6969;
 
 const server = app.listen(port, () => {
-  console.log(`[INFO] Server is running at localhost:${port}....`);
+  console.info(`[INFO] Server is running at localhost:${port}....`);
 });
 
 process.on("unhandledRejection", (err) => {
-  console.log(err.name, err.message);
-  console.log("[ERROR] UNHANDLER REJECTION. 💥Shutting Down");
+  console.error(err.name, err.message);
+  console.error("[ERROR] UNHANDLER REJECTION. 💥Shutting Down");
   server.close(() => {
     process.exit(1);
   });

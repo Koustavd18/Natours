@@ -1,6 +1,7 @@
 const express = require("express");
 const tourController = require("../controllers/toursController");
 const authController = require("../controllers/authController");
+const reviewRouter = require("./reviewRoutes");
 
 const router = express.Router();
 
@@ -29,5 +30,7 @@ router
   );
 
 router.route("/tour-name/:id").get(tourController.getTourName);
+
+router.use("/:tourId/reviews", reviewRouter);
 
 module.exports = router;
