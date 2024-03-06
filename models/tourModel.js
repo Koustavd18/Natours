@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 const slugify = require("slugify");
-// eslint-disable-next-line
-// const validator = require("validator");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -13,7 +11,6 @@ const tourSchema = new mongoose.Schema(
       trim: true,
       maxlength: [40, "Name must have lte 40 charcters"],
       minlenth: [10, "Name must have min 10 chareacters"],
-      // validate: [validator.isAlpha, "ONLY TEXT"],
     },
     slug: {
       type: String,
@@ -82,6 +79,36 @@ const tourSchema = new mongoose.Schema(
       default: false,
       select: false,
     },
+    startLocation: {
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      //Geo Data
+      {
+        type: {
+          type: String,
+          default: "Point",
+          enum: ["Point"],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -93,6 +120,11 @@ tourSchema.virtual("durationWeek").get(function () {
   return this.duration / 7;
 });
 
+tourSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
+});
 //Document Middleware
 
 // tourSchema.pre("save", function (next) {
@@ -109,6 +141,11 @@ tourSchema.pre("save", function (next) {
 //   next();
 // });
 
+// tourSchema.pre("save" , async function() {
+//   const guidesPromise = this.guides.map( async id => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromise)
+// })
+
 //Query  Middleware
 
 tourSchema.pre(/^find/, function () {
@@ -118,6 +155,14 @@ tourSchema.pre(/^find/, function () {
 
 tourSchema.post(/^find/, function (docs, next) {
   console.log("Performance:", Date.now() - this.start);
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "guides",
+    select: "-__v -passwordChangedAt",
+  });
   next();
 });
 
