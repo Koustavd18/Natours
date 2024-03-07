@@ -15,18 +15,19 @@ router.patch(
   authController.updatePassword,
 );
 
-router.patch("/updateMe", authController.protect, userController.updateMe);
+router.use(authController.protect);
+
+router.route("/me").get(userController.getMe, userController.getUser);
+
+router.patch("/updateMe", userController.updateMe);
 router.delete(
   "/deleteUser",
-  authController.protect,
+
   authController.restrictTo("admin"),
   userController.deleteUser,
 );
 
-router
-  .route("/")
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+router.route("/").get(userController.getAllUsers);
 router
   .route("/:id")
   .get(userController.getUser)
