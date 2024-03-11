@@ -20,6 +20,12 @@ router
   );
 router.route("/tour-name/:id").get(tourController.getTourName);
 
+router
+  .route("/tours-within/:distance/center/:latlng/unit/:unit")
+  .get(tourController.getToursWithin);
+
+router.get("/distances/:latlng/unit/:unit", tourController.getDistances);
+
 router.use(authController.protect);
 
 router
