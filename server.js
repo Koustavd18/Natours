@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 process.on("uncaughtException", (err) => {
-  console.error("UNCAUGHT EXCEPTION.💥 Shutting Down Server.... ");
+  console.error("[ERROR] UNCAUGHT EXCEPTION.💥 Shutting Down Server.... ");
   console.error(err.name, err.message);
   process.exit(1);
 });

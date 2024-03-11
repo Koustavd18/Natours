@@ -1,6 +1,6 @@
 /* eslint-disable node/no-unsupported-features/es-syntax */
 const Tour = require("../models/tourModel");
-const APIFeatures = require("../utils/apiFeatures");
+// const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const factory = require("./factoryHandlers");
@@ -12,54 +12,37 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 };
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  console.log("API requested at:", req.requestTime);
+exports.getAllTours = factory.getAll(Tour);
 
-  //Execute query
+// catchAsync(async (req, res, next) => {
+//   console.log("API requested at:", req.requestTime);
 
-  console.log(req.query);
-  const feature = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
+//   //Execute query
 
-  const tours = await feature.query;
+//   console.log(req.query);
+//   const feature = new APIFeatures(Tour.find(), req.query)
+//     .filter()
+//     .sort()
+//     .limitFields()
+//     .paginate();
 
-  res.status(200).json({
-    status: "success",
-    requestedAt: req.requestTime,
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
+//   const tours = await feature.query;
+
+//   res.status(200).json({
+//     status: "success",
+//     requestedAt: req.requestTime,
+//     results: tours.length,
+//     data: {
+//       tours,
+//     },
+//   });
+// });
 
 exports.getTourName = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id).select("name");
 
   if (!tour) {
     return next(new AppError("No tour with this Id", 404));
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      tour,
-    },
-  });
-});
-
-exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate("reviews");
-
-  //Tour.findOne({req.params.id}) in mongo shell
-
-  // Tour.findOne({_id:req.params.id})
-
-  if (!tour) {
-    return next(new AppError("No tour found with that id", 404));
   }
 
   res.status(200).json({
@@ -82,39 +65,8 @@ exports.createTour = catchAsync(async (req, res, next) => {
 });
 
 exports.updateTour = factory.updateOne(Tour);
-
-// exports.updateTour = catchAsync(async (req, res, next) => {
-//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-//     new: true,
-//     runValidators: true,
-//   });
-
-//   if (!tour) {
-//     return next(new AppError("No tour found with this ID", 404));
-//   }
-
-//   res.status(200).json({
-//     status: "success",
-//     data: {
-//       tour,
-//     },
-//   });
-// });
-
+exports.getTour = factory.getOne(Tour, "reviews");
 exports.deleteTour = factory.deleteOne(Tour);
-
-// exports.deleteTour = catchAsync(async (req, res, next) => {
-//   const tour = await Tour.findByIdAndDelete(req.params.id);
-
-//   if (!tour) {
-//     return next(new AppError("No tour found with this ID", 404));
-//   }
-
-//   res.status(204).json({
-//     status: "Success",
-//     message: "Successfully deleted the tour",
-//   });
-// });
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
@@ -238,3 +190,34 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
 //     throw new Error("PageNotFound");
 //   }
 // }
+
+// exports.updateTour = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
+
+//   if (!tour) {
+//     return next(new AppError("No tour found with this ID", 404));
+//   }
+
+//   res.status(200).json({
+//     status: "success",
+//     data: {
+//       tour,
+//     },
+//   });
+// });
+
+// exports.deleteTour = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findByIdAndDelete(req.params.id);
+
+//   if (!tour) {
+//     return next(new AppError("No tour found with this ID", 404));
+//   }
+
+//   res.status(204).json({
+//     status: "Success",
+//     message: "Successfully deleted the tour",
+//   });
+// });
