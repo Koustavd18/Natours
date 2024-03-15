@@ -154,7 +154,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   });
 
   if (!user) {
-    return next(new AppError("Token is invalid. Send a valid token", 400));
+    return next(new AppError("Token is invalid. Submit a valid token", 400));
   }
 
   user.password = req.body.password;
