@@ -9,6 +9,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 
+const viewRouter = require("./routes/viewRouter");
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
@@ -87,12 +88,7 @@ const home = (req, res) => {
 
 // Route Handlers
 
-app.route("/").get((req, res) => {
-  res.status(200).render("base", {
-    tour: "The Forest Hiker",
-    user: "Marendra Nodi",
-  });
-});
+app.use("/", viewRouter);
 
 app.route("/home").get(home);
 
