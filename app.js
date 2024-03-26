@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -8,6 +9,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 
+const viewRouter = require("./routes/viewRouter");
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
@@ -17,6 +19,14 @@ const globalErrorHandler = require("./controllers/errorController");
 const app = express();
 
 //Middlewares
+
+//Static Pages
+
+app.use(express.static(path.join(__dirname, "public")));
+
+// Set View Engine
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 
 // Set Security HTTP headers
 app.use(helmet());
@@ -54,8 +64,6 @@ const limiter = rateLimit({
 
 app.use("/api", limiter);
 
-app.use(express.static(`${__dirname}/public`));
-
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
 
@@ -80,7 +88,9 @@ const home = (req, res) => {
 
 // Route Handlers
 
-app.route("/").get(home);
+app.use("/", viewRouter);
+
+app.route("/home").get(home);
 
 app.use("/api/v1/tours", tourRouter);
 

@@ -45,6 +45,7 @@ const port = process.env.PORT || 6969;
 
 const server = app.listen(port, () => {
   console.info(`[INFO] Server is running at localhost:${port}....`);
+  console.info(`[TIME] ${Date().toString().split(" ").splice(0, 5).join(" ")}`);
 });
 
 process.on("unhandledRejection", (err) => {
