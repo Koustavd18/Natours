@@ -9,7 +9,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 
-const viewRouter = require("./routes/viewRouter");
+const viewRouter = require("./routes/viewRoutes");
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
@@ -18,7 +18,12 @@ const globalErrorHandler = require("./controllers/errorController");
 
 const app = express();
 
-//Middlewares
+//! Middlewares
+//Cross Origin Resource Sharing
+app.use(cors());
+
+// Set Security HTTP headers
+app.use(helmet());
 
 //Static Pages
 
@@ -27,12 +32,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // Set View Engine
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
-
-// Set Security HTTP headers
-app.use(helmet());
-
-//Cross Origin Resource Sharing
-app.use(cors());
 
 //Body parser
 app.use(express.json({ limit: "500kb" }));
@@ -66,7 +65,7 @@ app.use("/api", limiter);
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-
+  console.log(req.cookies);
   next();
 });
 
