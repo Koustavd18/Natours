@@ -36,6 +36,9 @@ app.set("views", path.join(__dirname, "views"));
 //Body parser
 app.use(express.json({ limit: "500kb" }));
 
+//URL Encoder
+app.use(express.urlencoded({ extended: true, limit: "500kb" }));
+
 //Cookie Parser
 app.use(cookieParser());
 
@@ -65,7 +68,6 @@ app.use("/api", limiter);
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.cookies);
   next();
 });
 
