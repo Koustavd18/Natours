@@ -12104,30 +12104,29 @@ var updateData = exports.updateData = /*#__PURE__*/function () {
       while (1) switch (_context.prev = _context.next) {
         case 0:
           endpoint = type === "password" ? "updatePassword" : "updateMe";
-          console.log(endpoint);
-          _context.prev = 2;
-          _context.next = 5;
+          _context.prev = 1;
+          _context.next = 4;
           return (0, _axios.default)({
             method: "PATCH",
             url: "http://127.0.0.1:8000/api/v1/users/".concat(endpoint),
             data: data
           });
-        case 5:
+        case 4:
           res = _context.sent;
           if (res.data.status === "success") {
             (0, _alerts.showAlert)("success", "".concat(type.toUpperCase(), " updated sucessfully"));
           }
-          _context.next = 12;
+          _context.next = 11;
           break;
-        case 9:
-          _context.prev = 9;
-          _context.t0 = _context["catch"](2);
+        case 8:
+          _context.prev = 8;
+          _context.t0 = _context["catch"](1);
           (0, _alerts.showAlert)("error", _context.t0.response.data.message);
-        case 12:
+        case 11:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[2, 9]]);
+    }, _callee, null, [[1, 8]]);
   }));
   return function updateData(_x, _x2) {
     return _ref.apply(this, arguments);
@@ -12281,6 +12280,7 @@ if (loginForm) {
     e.preventDefault();
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
+    console.log(email, password);
     (0, _login.login)(email, password);
   });
 }
@@ -12290,12 +12290,11 @@ if (logOutBtn) {
 if (userDataForm) {
   userDataForm.addEventListener("submit", function (e) {
     e.preventDefault();
-    var name = document.getElementById("name").value;
-    var email = document.getElementById("email").value;
-    (0, _updateSettings.updateData)({
-      name: name,
-      email: email
-    }, "data");
+    var form = new FormData();
+    form.append("name", document.getElementById("name").value);
+    form.append("email", document.getElementById("email").value);
+    form.append("photo", document.getElementById("photo").files[0]);
+    (0, _updateSettings.updateData)(form, "data");
   });
 }
 if (userPasswordForm) {
@@ -12357,7 +12356,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52426" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60743" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
