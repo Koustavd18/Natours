@@ -9,10 +9,14 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 
+//* Route Imports
 const viewRouter = require("./routes/viewRoutes");
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 const reviewRouter = require("./routes/reviewRoutes");
+const bookingRouter = require("./routes/bookingRoutes");
+
+//* Utils
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 
@@ -35,6 +39,9 @@ app.set("views", path.join(__dirname, "views"));
 
 //Body parser
 app.use(express.json({ limit: "500kb" }));
+
+//URL Encoder
+app.use(express.urlencoded({ extended: true, limit: "500kb" }));
 
 //Cookie Parser
 app.use(cookieParser());
@@ -65,7 +72,6 @@ app.use("/api", limiter);
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.cookies);
   next();
 });
 
@@ -96,6 +102,8 @@ app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
 app.use("/api/v1/reviews", reviewRouter);
+
+app.use("/api/v1/bookings", bookingRouter);
 
 /*
     Error Handling
