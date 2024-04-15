@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const compression = require("compression");
 
 //* Route Imports
 const viewRouter = require("./routes/viewRoutes");
@@ -49,7 +50,15 @@ app.use(cookieParser());
 //parameter pollution
 app.use(
   hpp({
-    whitelist: ["duartion", "sort"],
+    whitelist: [
+      "duartion",
+      "sort",
+      "difficulty",
+      "price",
+      "maxGroupSize",
+      "ratingsQuantity",
+      " ratings",
+    ],
   }),
 );
 
@@ -69,6 +78,9 @@ const limiter = rateLimit({
 });
 
 app.use("/api", limiter);
+
+//Compression
+app.use(compression());
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
